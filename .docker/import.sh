@@ -5,7 +5,7 @@ export DESCRIPTION="Docker container with Docker, Inspec and Ruby"
 export MAINTAINER="damacus"
 
 if ! [[ -e .docker/functions.sh ]];then
-  wget "https://raw.githubusercontent.com/damacus/docker-build-scripts/master/functions.sh" > ".docker/functions.sh"
+  wget -O .docker/functions.sh "https://raw.githubusercontent.com/damacus/docker-build-scripts/master/functions.sh"
 fi
 
 source ".docker/functions.sh"
