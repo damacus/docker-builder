@@ -19,9 +19,8 @@ RUN apk add --no-cache $BUILD_PACKAGES  &&\
     apk add --no-cache $RUBY_PACKAGES   &&\
     gem install inspec --no-ri --no-rdoc
 
-RUN  apk add --no-cache            &&\
-            ca-certificates        &&\
-            update-ca-certificates &&\
-            openssl
+RUN  apk add --no-cache ca-certificates openssl       &&\
+     update-ca-certificates
+
 RUN mkdir /project
 WORKDIR /project
