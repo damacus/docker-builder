@@ -10,7 +10,7 @@ jobs:
           version: 17.07.0-ce
       - restore_cache:
           keys:
-            - v2-{{ arch }}-{{ .Branch }}-{{ checksum "Dockerfile" }}
+            - v2-{{ arch }}-{{ checksum "Dockerfile" }}
           paths:
             - /caches/app.tar
       - run:
@@ -22,7 +22,7 @@ jobs:
             build
             test 'inspec'
       - save_cache:
-          key: v2-{{ arch }}-{{ .Branch }}-{{ checksum "Dockerfile" }}
+          key: v2-{{ arch }}-{{ checksum "Dockerfile" }}
           paths:
             - /caches/app.tar
       - deploy:
