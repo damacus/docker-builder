@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 export DESCRIPTION='Docker container with Docker, Inspec and Ruby'
 
 if ! [[ -e .docker/external_functions.sh ]];then
