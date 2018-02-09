@@ -31,8 +31,10 @@ jobs:
           name: Push Image
           context: org-global
           command: |
-            source ".docker/functions.sh"
-            push
+            bash -c "
+              source '.docker/functions.sh' &&\
+              push
+            "
 
 workflows:
   version: 2
