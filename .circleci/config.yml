@@ -18,10 +18,11 @@ jobs:
           command: |
             apk add --no-cache ca-certificates openssl bash
             update-ca-certificates
-            bash
-            source ".docker/functions.sh"
-            build
-            test 'inspec'
+            bash -c "
+              source ".docker/functions.sh" &&\
+              build                         &&\
+              test 'inspec'
+            "
       - save_cache:
           key: v2-{{ arch }}-{{ checksum "Dockerfile" }}
           paths:
