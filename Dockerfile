@@ -1,15 +1,28 @@
 FROM docker:stable-git
 
-ENV BUILD_PACKAGES bash curl curl-dev ruby-dev build-base libffi-dev ca-certificates openssl git
-ENV RUBY_PACKAGES ruby ruby-bundler ruby-dev
-COPY install_tools.sh /install_tools.sh
-RUN apk add --no-cache $BUILD_PACKAGES    &&\
-    apk add --no-cache $RUBY_PACKAGES     &&\
-    update-ca-certificates                &&\
-    gem install inspec --no-ri --no-rdoc  &&\
-    chmod +x /install_tools.sh            &&\
-    ./install_tools.sh                    &&\
+RUN apk add --no-cache bash curl \
+                       curl-dev  libffi-dev      \
+                       build-base      \
+                       ca-certificates openssl   \
+                       git ruby ruby-bundler     \
+                       ruby-dev                  \
+                       python3                 &&\
+    mkdir -p /etc/ssl/certs/                   &&\
+    echo "Updating CA Certs"                   &&\
+    update-ca-certificates --fresh             &&\
+    gem install inspec --no-ri --no-rdoc       &&\
+    pip3 install --upgrade pip                 &&\
     mkdir /project
+
+ENV GHR_VERSION="v0.10.0"    \
+    COMPOSE_VERSION="1.21.2"
+
+RUN curl -L -O https://github.com/tcnksm/ghr/releases/download/${GHR_VERSION}/ghr_${GHR_VERSION}_linux_amd64.tar.gz &&\
+    tar -xvzf ghr_${GHR_VERSION}_linux_amd64.tar.gz                                                                 &&\
+    mv ghr_${GHR_VERSION}_linux_amd64/ghr /usr/local/bin                                                            &&\
+    rm -rf ghr_${GHR_VERSION}_linux_amd64 ghr_${GHR_VERSION}_linux_amd64.tar.gz                                     &&\
+    hash ghr                                                                                                        &&\
+    pip3 install --no-cache-dir docker-compose==${COMPOSE_VERSION}
 
 WORKDIR /project
 
