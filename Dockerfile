@@ -1,12 +1,16 @@
 FROM docker:stable-git
 
-RUN apk add --no-cache bash curl \
-                       curl-dev  libffi-dev      \
+RUN apk add --no-cache bash curl       \
+                       curl-dev        \
+                       libffi-dev      \
                        build-base      \
-                       ca-certificates openssl   \
-                       git ruby ruby-bundler     \
-                       ruby-dev                  \
-                       python3                 &&\
+                       ca-certificates \
+                       openssl         \
+                       git             \
+                       ruby            \
+                       ruby-bundler    \
+                       ruby-dev        \
+                       python3       &&\
     mkdir -p /etc/ssl/certs/                   &&\
     echo "Updating CA Certs"                   &&\
     update-ca-certificates --fresh             &&\
@@ -14,7 +18,7 @@ RUN apk add --no-cache bash curl \
     pip3 install --upgrade pip                 &&\
     mkdir /project
 
-ENV GHR_VERSION="v0.10.0"    \
+ENV GHR_VERSION="v0.10.1"    \
     COMPOSE_VERSION="1.21.2"
 
 RUN curl -L -O https://github.com/tcnksm/ghr/releases/download/${GHR_VERSION}/ghr_${GHR_VERSION}_linux_amd64.tar.gz &&\
@@ -32,8 +36,10 @@ ARG DESCRIPTION=unknown
 ARG URL=unknown
 ARG COMMIT=unknown
 
-LABEL "io.damacus.title"=$PROJECT            \
-      "io.damacus.created"=$DATE             \
-      "io.damacus.description"=$DESCRIPTION  \
-      "io.damacus.url"=$URL                  \
-      "io.damacus.revision"=$COMMIT
+LABEL "io.damacus.title"=$PROJECT                   \
+      "io.damacus.created"=$DATE                    \
+      "io.damacus.description"=$DESCRIPTION         \
+      "io.damacus.url"=$URL                         \
+      "io.damacus.revision"=$COMMIT                 \
+      "com.docker.compose.version"=$COMPOSE_VERSION \
+      "tcnksm.github.io.ghr.version"=$GHR_VERSION
