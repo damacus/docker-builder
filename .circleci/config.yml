@@ -15,7 +15,7 @@ jobs:
 
   build_and_deploy:
     docker:
-      - image: docker:stable-git
+      - image: circleci/golang
     working_directory: ~/project
     steps:
       - checkout
@@ -24,8 +24,6 @@ jobs:
       - run:
           name: Build image
           command: |
-            apk add --no-cache ca-certificates openssl bash
-            update-ca-certificates
             docker-compose build
       - deploy:
           name: Push Image
