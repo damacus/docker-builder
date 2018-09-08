@@ -1,6 +1,6 @@
 version: 2
 jobs:
-  build:
+  test:
     docker:
       - image: docker:stable-git
     working_directory: ~/project
@@ -18,11 +18,31 @@ jobs:
           command: |
             apk add --no-cache ca-certificates openssl bash
             update-ca-certificates
-            bash -c "
-              source ".docker/functions.sh" &&\
-              build                         &&\
-              test 'inspec'
-            "
+            docker-compose build
+      - save_cache:
+          key: v2-{{ arch }}-{{ checksum "Dockerfile" }}
+          paths:
+            - /caches/app.tar
+
+  build_and_deploy:
+    docker:
+      - image: docker:stable-git
+    working_directory: ~/project
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: 17.11.0-ce
+      - restore_cache:
+          keys:
+            - v2-{{ arch }}-{{ checksum "Dockerfile" }}
+          paths:
+            - /caches/app.tar
+      - run:
+          name: Build image
+          command: |
+            apk add --no-cache ca-certificates openssl bash
+            update-ca-certificates
+            docker-compose build
       - save_cache:
           key: v2-{{ arch }}-{{ checksum "Dockerfile" }}
           paths:
@@ -31,25 +51,34 @@ jobs:
           name: Push Image
           context: org-global
           command: |
-            bash -c "
-              source '.docker/functions.sh' &&\
-              push
-            "
+            docker login -u "${DOCKER_LOGIN:?}" -p "${DOCKER_PASSWORD:?}"
+            docker-compose push builder
+            docker tag damacus/docker-builder:latest damacus/docker-builder:${CIRCLE_BUILD_NUM}
+            docker push damacus/docker-builder:${CIRCLE_BUILD_NUM}
 
 workflows:
   version: 2
   build:
     jobs:
-      - build:
+      - test:
           context: org-global
+          filters:
+            branches:
+              ignore:
+                - master
+      - build_and_deploy:
+          context: org-global
+          filters:
+            branches:
+              only:
+                - master
   nightly:
     triggers:
       - schedule:
-          cron: "0 0 * * *"
+          cron: "0 0 * * 0"
           filters:
             branches:
               only:
                 - master
     jobs:
-      - build:
-          context: org-global
+      - build_and_deploy
