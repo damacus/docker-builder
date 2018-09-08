@@ -2,7 +2,7 @@ version: 2
 jobs:
   test:
     docker:
-      - image: docker:stable-git
+      - image: circleci/golang
     working_directory: ~/project
     steps:
       - checkout
@@ -16,8 +16,6 @@ jobs:
       - run:
           name: Build image
           command: |
-            apk add --no-cache ca-certificates openssl bash
-            update-ca-certificates
             docker-compose build
       - save_cache:
           key: v2-{{ arch }}-{{ checksum "Dockerfile" }}
