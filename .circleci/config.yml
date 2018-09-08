@@ -8,19 +8,10 @@ jobs:
       - checkout
       - setup_remote_docker:
           version: 17.11.0-ce
-      - restore_cache:
-          keys:
-            - v2-{{ arch }}-{{ checksum "Dockerfile" }}
-          paths:
-            - /caches/app.tar
       - run:
           name: Build image
           command: |
             docker-compose build
-      - save_cache:
-          key: v2-{{ arch }}-{{ checksum "Dockerfile" }}
-          paths:
-            - /caches/app.tar
 
   build_and_deploy:
     docker:
@@ -30,21 +21,12 @@ jobs:
       - checkout
       - setup_remote_docker:
           version: 17.11.0-ce
-      - restore_cache:
-          keys:
-            - v2-{{ arch }}-{{ checksum "Dockerfile" }}
-          paths:
-            - /caches/app.tar
       - run:
           name: Build image
           command: |
             apk add --no-cache ca-certificates openssl bash
             update-ca-certificates
             docker-compose build
-      - save_cache:
-          key: v2-{{ arch }}-{{ checksum "Dockerfile" }}
-          paths:
-            - /caches/app.tar
       - deploy:
           name: Push Image
           context: org-global
