@@ -59,4 +59,5 @@ workflows:
               only:
                 - master
     jobs:
-      - build_and_deploy
+      - build_and_deploy:
+          context: org-global
