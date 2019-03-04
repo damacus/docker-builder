@@ -2,7 +2,7 @@ version: 2
 jobs:
   test:
     docker:
-      - image: circleci/golang
+      - image: circleci/buildpack-deps
     working_directory: ~/project
     steps:
       - checkout
